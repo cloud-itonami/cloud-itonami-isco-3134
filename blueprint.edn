@@ -1,0 +1,11 @@
+{:itonami.blueprint/id "cloud-itonami-3134"
+ :itonami.blueprint/name "Petroleum and Natural Gas Refining Plant Operators Coordination"
+ :itonami.blueprint/isco-08 "3134"
+ :itonami.blueprint/domain :manufacturing/petroleum-refining
+ :itonami.blueprint/license "AGPL-3.0-or-later"
+ :itonami.blueprint/social-impact [:industrial-safety :environmental-compliance :occupational-health :critical-infrastructure :energy-security]
+ :itonami.blueprint/governor :refinery-operations-governor
+ :itonami.blueprint/robotics true
+ :itonami.blueprint/required-technologies [:robotics :identity :forms :dmn :bpmn :audit-ledger :telemetry :emissions-tracking]
+ :itonami.blueprint/optional-technologies [:pressure-monitoring :temperature-monitoring :product-quality-assurance :safety-systems]
+ :itonami.blueprint/status :implemented}

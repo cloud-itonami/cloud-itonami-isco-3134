@@ -1,0 +1,8 @@
+*~
+*.swp
+*.swo
+.#*
+.DS_Store
+target/
+.cpcache/
+.clj-kondo/
