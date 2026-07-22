@@ -38,6 +38,44 @@ robot actions (gated) + audit ledger + escalation to operator/engineer
 
 No automated advice can schedule maintenance the governor refuses, verify a batch outside its registered scope, or publish an emissions report with threshold exceedance without governor approval and human sign-off. **A proposal mentioning process-control operations is permanently rejected, even with human approval.**
 
+## The actor (real `langgraph-clj` `StateGraph`)
+
+`refinery.actor/build-graph` compiles a real `langgraph.graph/state-graph`. One graph run = one operation request. `refinery.advisor`'s proposal is ALWAYS routed through `refinery.governor/evaluate` and `refinery.phase`'s state machine before anything reaches `refinery.store/log-action` (the append-only audit ledger):
+
+```
+:intake -> :advise -> :govern -> :decide -+-> :commit             (clean, no violations)
+                                           +-> :request-approval    (soft violation -> :commit)
+                                           +-> :hold                (hard violation, permanent)
+```
+
+`:request-approval` is an `interrupt-before` gate -- the compiled graph genuinely pauses (checkpointed) and waits for `refinery.actor/approve!` to resume it, so human sign-off is a real suspend/resume, not a flag. Every commit or hold reaches `refinery.store/log-action` exactly once, from `:commit`/`:hold` respectively -- the ledger stays empty until that happens.
+
+```clojure
+(require '[refinery.actor :as actor]
+         '[refinery.store :as store])
+
+(def st (-> (store/init)
+            (store/register-plant "plant-01" "Tokyo Refinery" "Tokyo, Japan")))
+
+(def graph (actor/build-graph))
+
+;; clean, routine proposal -> commits immediately
+(actor/run-request! graph st
+  {:op :proposal/log-process-reading :plant-id "plant-01"
+   :reading-type "Temperature" :value 280.5 :unit "°C"}
+  "thread-1")
+
+;; a high-stakes actuation op ALWAYS escalates -- interrupts at :request-approval
+(def held (actor/run-request! graph st
+            {:op :actuation/schedule-maintenance :equipment-id "eq-01"
+             :maintenance-type "Routine Inspection"}
+            "thread-2"))
+;; => {:status :interrupted, :frontier [:request-approval], ...}
+
+;; human sign-off resumes the SAME thread through to :commit
+(actor/approve! graph "thread-2")
+```
+
 ## Proposal Operations
 
 - `:log-process-reading` — routine parameter reading logging (temperature, pressure, etc.)
@@ -56,10 +94,10 @@ No automated advice can schedule maintenance the governor refuses, verify a batc
 ## Building & Testing
 
 ```bash
-# Run tests
+# Run tests (governor, phase, store, and the compiled actor StateGraph end-to-end)
 clojure -M:test
 
-# Run demo
+# Run the governor/phase demo (refinery.sim)
 clojure -M:dev:run
 
 # Lint
