@@ -68,3 +68,41 @@
            :destination destination
            :detail (str "Product shipment coordination: " quantity " units of " product-type
                        " to " destination)}})
+
+;; ----------------------------- generic dispatcher (for refinery.actor) -----------------------------
+
+(defn advise
+  "Dispatch a generic `{:op ..}` operation request to the matching
+  proposal-building fn above, keyed on `refinery.governor`'s own
+  checked op vocabulary (`:proposal/log-process-reading`,
+  `:actuation/schedule-maintenance`, `:actuation/log-emissions-report`,
+  `:proposal/coordinate-shipment`). This is a thin router only -- it
+  invents no new domain facts, just calls the existing fn with the
+  existing arglist for that op so `refinery.actor` has a single entry
+  point to bind into its `:advise` graph node.
+
+  Request shapes (mirror each underlying fn's arglist exactly):
+    {:op :proposal/log-process-reading   :plant-id .. :reading-type .. :value .. :unit ..}
+    {:op :actuation/schedule-maintenance :equipment-id .. :maintenance-type ..}
+    {:op :actuation/log-emissions-report :report-id .. :emissions-type .. :value ..
+                                          :threshold .. :threshold-exceeded? ..}
+    {:op :proposal/coordinate-shipment   :batch-id .. :product-type .. :quantity .. :destination ..}"
+  [advisor {:keys [op] :as request}]
+  (case op
+    :proposal/log-process-reading
+    (log-process-reading-proposal advisor (:plant-id request) (:reading-type request)
+                                  (:value request) (:unit request))
+
+    :actuation/schedule-maintenance
+    (schedule-maintenance-proposal advisor (:equipment-id request) (:maintenance-type request))
+
+    :actuation/log-emissions-report
+    (flag-emissions-exceedance-proposal advisor (:report-id request) (:emissions-type request)
+                                        (:value request) (:threshold request)
+                                        (:threshold-exceeded? request))
+
+    :proposal/coordinate-shipment
+    (coordinate-shipment-proposal advisor (:batch-id request) (:product-type request)
+                                  (:quantity request) (:destination request))
+
+    (throw (ex-info "Unknown refinery operation request" {:op op :request request}))))

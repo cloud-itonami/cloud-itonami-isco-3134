@@ -1,4 +1,4 @@
-{:itonami.blueprint/id "cloud-itonami-3134"
+{:itonami.blueprint/id "cloud-itonami-isco-3134"
  :itonami.blueprint/name "Petroleum and Natural Gas Refining Plant Operators Coordination"
  :itonami.blueprint/isco-08 "3134"
  :itonami.blueprint/domain :manufacturing/petroleum-refining
@@ -8,4 +8,5 @@
  :itonami.blueprint/robotics true
  :itonami.blueprint/required-technologies [:robotics :identity :forms :dmn :bpmn :audit-ledger :telemetry :emissions-tracking]
  :itonami.blueprint/optional-technologies [:pressure-monitoring :temperature-monitoring :product-quality-assurance :safety-systems]
- :itonami.blueprint/status :implemented}
+ :itonami.blueprint/status :implemented
+ :itonami.blueprint/maturity :implemented}
