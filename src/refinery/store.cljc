@@ -19,7 +19,7 @@
             {:id plant-id
              :name name
              :location location
-             :registered-at (java.time.Instant/now)}))
+             :registered-at #?(:clj (java.time.Instant/now) :cljs (js/Date.))}))
 
 (defn plant-registered?
   "Check if a plant is registered in the store."
@@ -33,7 +33,7 @@
             {:id equipment-id
              :plant-id plant-id
              :type equipment-type
-             :registered-at (java.time.Instant/now)}))
+             :registered-at #?(:clj (java.time.Instant/now) :cljs (js/Date.))}))
 
 (defn equipment-registered?
   "Check if equipment is registered."
@@ -49,7 +49,7 @@
              :product-type product-type
              :quality-cert quality-cert
              :verified? true
-             :verified-at (java.time.Instant/now)}))
+             :verified-at #?(:clj (java.time.Instant/now) :cljs (js/Date.))}))
 
 (defn batch-verified?
   "Check if a batch is verified."
@@ -63,7 +63,7 @@
   "Record an action to the audit ledger."
   [st action-record]
   (update st :audit-ledger conj
-          (assoc action-record :logged-at (java.time.Instant/now))))
+          (assoc action-record :logged-at #?(:clj (java.time.Instant/now) :cljs (js/Date.)))))
 
 (defn get-ledger
   "Retrieve the audit ledger."
