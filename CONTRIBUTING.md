@@ -16,13 +16,13 @@ Thanks for your interest in contributing!
 - Follow Clojure style conventions (e.g., using kebab-case for function names)
 - All source code is portable `.cljc` (no JVM-only constructs)
 - Tests are required for new features
-- Run `clojure -M:lint` before submitting a PR
+- Run `kbb -M:lint` before submitting a PR
 
 ## Testing
 
 Make sure all tests pass:
 ```bash
-clojure -M:test
+kbb -M:test
 ```
 
 ## Security Issues
