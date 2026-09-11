@@ -95,13 +95,13 @@ No automated advice can schedule maintenance the governor refuses, verify a batc
 
 ```bash
 # Run tests (governor, phase, store, and the compiled actor StateGraph end-to-end)
-clojure -M:test
+kbb -M:test
 
 # Run the governor/phase demo (refinery.sim)
-clojure -M:dev:run
+kbb -M:dev:run
 
 # Lint
-clojure -M:lint
+kbb -M:lint
 ```
 
 ## Capability layer

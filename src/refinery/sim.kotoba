@@ -2,7 +2,7 @@
   "Refinery Operations Simulation -- demo driver for testing the actor.
 
   Usage:
-    clojure -M:dev:run"
+    kbb -M:dev:run"
   (:require [refinery.advisor :as advisor]
             [refinery.governor :as governor]
             [refinery.phase :as phase]
