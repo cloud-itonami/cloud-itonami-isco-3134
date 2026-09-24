@@ -3,11 +3,19 @@
  ;; all .cljc -> portable to JVM / SCI / ClojureScript / GraalVM).
  ;; For monorepo workspace dev, uncomment :local/root and use :dev alias.
  ;; For standalone forks, use git coordinates to kotoba-lang/langgraph.
- :deps {io.github.kotoba-lang/langgraph
+ :deps {
+        ;; kotoba.robotics.process: the process-physics solvers and probe this
+        ;; repo's physics.edn runs on (physical-AI bot, scripts/physical-ai-bots).
+        io.github.kotoba-lang/robotics {:local/root "../../kotoba-lang/robotics"}
+io.github.kotoba-lang/langgraph
         {:git/url "https://github.com/kotoba-lang/langgraph.git"
          :git/sha "6daa48e7bf86acc13d44804104fced4938530fd2"}}
  :aliases
- {;; monorepo workspace dev -- pin both to local checkout
+ {
+  ;; kbb -M:physics -> the physical-AI bot's measurement: runs physics.edn on
+  ;; kotoba.robotics.process and prints one probe map. Exit 2 = could not measure.
+  :physics {:main-opts ["-m" "kotoba.robotics.process.probe"]}
+;; monorepo workspace dev -- pin both to local checkout
   :dev-local {:override-deps
               {io.github.kotoba-lang/langgraph
                {:local/root "../../kotoba-lang/langgraph"}

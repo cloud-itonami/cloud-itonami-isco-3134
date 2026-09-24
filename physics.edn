@@ -1,0 +1,35 @@
+;; What this vertical's robot physically does, declared for
+;; kotoba.robotics.process (kotoba-lang/robotics). `kbb -M:dev:physics` runs it.
+;;
+;; README: a refinery operations coordinator for petroleum and natural gas
+;; refining plant operators (ISCO 3134) -- process-parameter logging,
+;; maintenance scheduling, emissions monitoring and refined-product shipment
+;; coordination (it never operates valves or furnaces). The physics it logs
+;; and coordinates around: the pressure drop of a diesel product transfer
+;; line at the shipment rate, and the cladding temperature of a lagged
+;; hot-oil line on the reading round.
+;;
+;; Every number without a cited source is marked `estimate` in its :basis.
+;; Replacing an estimate with a sourced value is this bot's growth work.
+{:physics/schema "itonami.physical-ai.spec.v1"
+ :repo "cloud-itonami/cloud-itonami-isco-3134"
+ :cases
+ [{:id :diesel-transfer-line
+   :kind :pipe-flow
+   :procedure "diesel (840 kg/m3, 3 mPa s) moves through 500 m of 100 mm line from rundown tank to the loading rack"
+   :params {:diameter-m 0.10 :length-m 500.0 :roughness-m 4.5e-5
+            :density-kg-m3 840.0 :viscosity-pa-s 3.0e-3 :pump-efficiency 0.7}
+   :sweep {:param :q-m3s :values [0.005 0.010 0.015 0.020 0.030]}
+   :quantity :pressure-drop-pa
+   :limit {:max 400000.0 :basis "estimate: ~4 bar differential available from the transfer pump at the rack"}
+   :boundary {:lo 0.001 :hi 0.05}}
+  {:id :hot-oil-line-cladding
+   :kind :thermal
+   :procedure "350 C hot-oil line under calcium-silicate lagging; the round reads the cladding surface at steady state"
+   :params {:conductivity-w-mk 0.07 :density-kg-m3 240.0 :specific-heat-j-kgk 1000.0
+            :t0-c 30.0 :t-hot-c 350.0 :front-fixed? true :t-back-ambient-c 30.0 :h-back-w-m2k 10.0
+            :threshold-c 60.0 :duration-s 86400.0 :nodes 11}
+   :sweep {:param :thickness-m :values [0.025 0.040 0.050 0.075 0.100]}
+   :quantity :final-back-c
+   :limit {:max 60.0 :basis "estimate: cladding surface kept below ~60 C so contact on the walkway does not burn"}
+   :boundary {:lo 0.01 :hi 0.20}}]}
