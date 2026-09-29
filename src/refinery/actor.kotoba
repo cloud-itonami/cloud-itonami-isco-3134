@@ -2,7 +2,7 @@
   "RefineryOperationsActor -- one refinery-operations coordination
   request = one supervised actor run, expressed as a REAL compiled
   `langgraph-clj` `StateGraph` (`langgraph.graph/state-graph` +
-  `compile-graph`), per ADR-2607011000 / CLAUDE.md Actors section /
+  `compile-graph`), per ADR-2607011000 / AGENTS.md Actors section /
   skill `build-actor`. The Refinery Operations Advisor
   (`refinery.advisor`) is sealed into a single node (`:advise`); its
   proposal is ALWAYS routed through the independent Refinery
